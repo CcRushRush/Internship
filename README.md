@@ -1,2 +1,0 @@
-# Internship
-Internship learning

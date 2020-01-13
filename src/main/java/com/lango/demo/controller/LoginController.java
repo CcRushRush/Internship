@@ -11,11 +11,11 @@ import com.lango.demo.service.impl.UserService;
 public class LoginController {
 
 	@Autowired
-	private UserService userService;
+private UserService userService;
 	
 	@PostMapping
 	public String login(){
-		return userService.login();
+	return userService.login();
 	}
 	
 	@GetMapping

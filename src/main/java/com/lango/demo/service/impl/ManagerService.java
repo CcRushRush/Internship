@@ -2,9 +2,15 @@ package com.lango.demo.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.lango.demo.service.IManagerService;
+
 @Service
-public class ManagerService {
-	public String login(){
-		return "manager success";
+public class ManagerService implements IManagerService{
+
+	@Override
+	public String login() {
+		// TODO Auto-generated method stub
+		return "manager login success";
 	}
+	
 }

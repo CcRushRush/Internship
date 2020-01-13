@@ -2,11 +2,17 @@ package com.lango.demo.service.impl;
 
 import org.springframework.stereotype.Service;
 
-@Service
-public class UserService {
+import com.lango.demo.service.IUserService;
 
-	public String login(){
-		return "user success";
+@Service
+public class UserService implements IUserService{
+
+	@Override
+	public String login() {
+		// TODO Auto-generated method stub
+		return "user login success";
 	}
+
+	
 }
                                                                        

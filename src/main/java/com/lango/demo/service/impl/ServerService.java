@@ -1,16 +1,19 @@
 package com.lango.demo.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lango.demo.mapper.CheckRecordMapper;
@@ -21,9 +24,11 @@ import com.lango.demo.mapper.TestMethodMapper;
 import com.lango.demo.pojo.CheckRecord;
 import com.lango.demo.pojo.FaultRecord;
 import com.lango.demo.pojo.RepairMethod;
+import com.lango.demo.pojo.Schedule;
 import com.lango.demo.pojo.Server;
 import com.lango.demo.pojo.TestMethod;
 import com.lango.demo.service.IServerService;
+import com.lango.demo.util.SendMessageUtils;
 
 /**
  * @author: cc
@@ -71,8 +76,19 @@ public class ServerService implements IServerService {
 		// TODO Auto-generated method stub
 		logger.info("添加服务,参数为:" + server);
 		int judge = serverMapper.insertServer(server);
-		if (judge > 0)
+		if (judge > 0) {
+			if (server.getAutoNotice() == 1) {
+				RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+				HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+
+				Schedule schedule = new Schedule();
+				schedule.setInterval(30); // 默认定时任务为30分钟
+				schedule.setLastDateTiem(new Date());
+				schedule.setsId(server.getsId());
+				request.getSession().setAttribute(String.valueOf(server.getsId()), schedule);
+			}
 			return true;
+		}
 		return false;
 	}
 
@@ -88,7 +104,7 @@ public class ServerService implements IServerService {
 
 	// 根据选择的修复方法进行修复
 	@Override
-	public boolean repairServer(Server server) {
+	public List<String> repairServer(Server server) {
 		logger.info("正在自动修复服务:" + server.getsName());
 		// 将传过来的修复方法id可能是字符串替换成数字,如["1","2"] => [1,2]
 		String ids = server.getRepairMethodIds();
@@ -101,6 +117,25 @@ public class ServerService implements IServerService {
 		}
 		// 根据方法id获取修复方法
 		List<RepairMethod> repairMethods = repairMethodMapper.selectMethodsByIds(lists);
+
+		// 获取配置信息
+		String configurations = server.getsMessage();
+		System.out.println(configurations);
+		if (configurations == null) {
+			logger.info("服务名为:" + server.getsName() + " 的服务的配置信息为空");
+			List<String> lStrings = new ArrayList<>();
+			lStrings.add("服务名为:" + server.getsName() + " 的服务的配置信息为空");
+			return lStrings;
+		}
+		System.out.println("服务名为:" + server.getsId() + "的配置信息如下:");
+		// 将configurations 转成数组
+		List<Object> list = JSONObject.parseArray(configurations);
+		for (Object object : list) {
+			JSONObject jsonObject = (JSONObject) JSONObject.parse(object.toString());
+			System.out.println(jsonObject.get("key") + ":" + jsonObject.get("value"));
+
+		}
+
 		// 保存每次修复结果
 		List<String> repairResults = new ArrayList<>();
 		for (Iterator<RepairMethod> iterator = repairMethods.iterator(); iterator.hasNext();) {
@@ -119,6 +154,9 @@ public class ServerService implements IServerService {
 			repairResults.add(result);
 		}
 		// 将结果通知负责人
+		SendMessageUtils sendMessageUtils = SendMessageUtils.getInstance();
+		sendMessageUtils.sendMessageToChargePerson(server.getcId(), String.valueOf(repairResults));
+
 		logger.info("将服务id为" + server.getsId() + "的总的修复结果通知给负责人:" + server.getChargePerson());
 		CheckRecord checkRecord = new CheckRecord();
 		checkRecord.setsId(server.getsId());
@@ -127,7 +165,7 @@ public class ServerService implements IServerService {
 		// 将修复记录保存到数据库
 		checkRecordMapper.insertCheckRecord(checkRecord);
 
-		return true;
+		return repairResults;
 	}
 
 	// 这个主要是返回测试结果
@@ -136,11 +174,13 @@ public class ServerService implements IServerService {
 		logger.info("服务名为:" + server.getsName() + " 的服务开始检测");
 		String ids = server.getTestMethodIds();
 		if (ids == null) {
-			return null;
+			logger.info("服务名为:" + server.getsName() + " 的服务的检测方法为空");
+			List<String> lStrings = new ArrayList<>();
+			lStrings.add("服务名为:" + server.getsName() + " 的服务的检测方法为空");
+			return lStrings;
 		}
 		// 将传过来的测试方法id可能是字符串替换成数字,如["1","2"] => [1,2]
 		ids = ids.replace("\"", "");
-		System.out.println(ids);
 		ids = ids.substring(1, ids.length() - 1);
 		String[] words2 = ids.split("\\,");
 		List<Integer> lists = new ArrayList<>();
@@ -153,20 +193,22 @@ public class ServerService implements IServerService {
 
 		// 获取配置信息
 		String configurations = server.getsMessage();
+		System.out.println(configurations);
 		if (configurations == null) {
-			return null;
+			logger.info("服务名为:" + server.getsName() + " 的服务的配置信息为空");
+			List<String> lStrings = new ArrayList<>();
+			lStrings.add("服务名为:" + server.getsName() + " 的服务的配置信息为空");
+			return lStrings;
 		}
-		// 将configurations 转成json对象
+		System.out.println("服务名为:" + server.getsId() + "的配置信息如下:");
+		// 将configurations 转成数组
+		List<Object> list = JSONObject.parseArray(configurations);
+		for (Object object : list) {
+			JSONObject jsonObject = (JSONObject) JSONObject.parse(object.toString());
+			System.out.println(jsonObject.get("key") + ":" + jsonObject.get("value"));
 
-		// JSONObject object = JSONObject.parseObject(configurations);
-		//
-		// // 开始遍历所有key-value
-		// // fastjson解析方法
-		// System.out.println("服务名为:" + server.getsId() + "的配置信息如下:");
-		// for (Map.Entry<String, Object> entry : object.entrySet()) {
-		// // 这里主要对配置信息取出,然后放入到相应的方法中进行检测
-		// System.out.println(entry.getKey() + ":" + entry.getValue());
-		// }
+		}
+
 		// 保存每次测试结果
 		List<String> testResults = new ArrayList<>();
 		for (Iterator<TestMethod> iterator = testMethods.iterator(); iterator.hasNext();) {
@@ -198,6 +240,8 @@ public class ServerService implements IServerService {
 		}
 
 		logger.info("正在将服务为:" + server.getsName() + "的检测结果通知负责人:" + server.getChargePerson());
+		SendMessageUtils sendMessageUtils = SendMessageUtils.getInstance();
+		sendMessageUtils.sendMessageToChargePerson(server.getcId(), String.valueOf(testResults));
 
 		// 将这一次总的测试结果保存的检测记录表
 		CheckRecord checkRecord = new CheckRecord();

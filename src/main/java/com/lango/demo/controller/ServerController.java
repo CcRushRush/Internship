@@ -45,7 +45,7 @@ public class ServerController {
 	}
 
 	@PostMapping(value = "repairServer")
-	public boolean repairServer(@RequestBody @NotNull Server server) {
+	public List<String> repairServer(@RequestBody @NotNull Server server) {
 		return serverService.repairServer(server);
 	}
 

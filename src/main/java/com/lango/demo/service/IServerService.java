@@ -17,7 +17,7 @@ public interface IServerService {
 
 	public boolean deleteServer(Long sId);
 	
-	public boolean repairServer(Server server);
+	public List<String> repairServer(Server server);
 	
 	public List<String> testServer(Server server);
 }

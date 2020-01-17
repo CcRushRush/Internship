@@ -61,7 +61,7 @@
 		#{sId}
 	</update>
 
-	<insert id="insertServer" parameterType="com.lango.demo.pojo.Server">
+	<insert id="insertServer" parameterType="com.lango.demo.pojo.Server" keyColumn="s_id" keyProperty="sId" useGeneratedKeys="true">
 		insert into
 		server(s_name,s_type,s_message,auto_notice,auto_repair,e_id,c_id,charge_person,test_method_ids,repair_method_ids)
 		values(#{sName},#{sType},#{sMessage},#{autoNotice},#{autoRepair},#{eId},#{cId},#{chargePerson},#{testMethodIds},#{repairMethodIds})

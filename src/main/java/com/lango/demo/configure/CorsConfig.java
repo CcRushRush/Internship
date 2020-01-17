@@ -9,6 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author: cc 
  * @version: 2020年1月17日 上午9:50:16 
  */
+/**
+ * 解决前后端跨域
+ */
 @Configuration
 public class CorsConfig {
 	@Bean

@@ -66,8 +66,15 @@ public class ServerService implements IServerService {
 		// TODO Auto-generated method stub
 		logger.info("更新服务,参数为:" + server);
 		int judge = serverMapper.updateServer(server);
-		if (judge > 0)
+		if (judge > 0){
+			//如果自动检测设为否,需要将原先保存到服务器的数据至空
+			if (server.getAutoNotice() == 0) {
+				RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+				HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+				request.getSession().setAttribute(String.valueOf(server.getsId()), null);
+			}
 			return true;
+		}
 		return false;
 	}
 

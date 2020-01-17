@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lango.demo.mapper.EquipmentMapper">
+	
+	<resultMap id="EquipmentMap" type="com.lango.demo.pojo.Equipment">
+		<result column="e_id" property="eId" jdbcType="INTEGER" />
+		<result column="e_name" property="eName" jdbcType="VARCHAR" />
+		<result column="o_iP" property="oIP" jdbcType="VARCHAR" />
+		<result column="i_iP" property="iIP" jdbcType="VARCHAR" />
+		<result column="port" property="port" jdbcType="VARCHAR" />
+		<result column="e_message" property="eMessage" jdbcType="VARCHAR" />
+		<result column="domain" property="domain" jdbcType="INTEGER" />
+
+		<result column="c_id" property="cId" jdbcType="INTEGER" />
+		<result column="charge_person" property="chargePerson"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectEquipments" parameterType="com.lango.demo.pojo.Equipment"
+		resultMap="EquipmentMap">
+		select * from equipment where e_id &gt; 0
+		<if test="eId != null and eId != 0">
+			AND e_id = #{eId}
+		</if>
+		<if test="cId != null and cId != 0">
+			AND c_id = #{cId}
+		</if>
+		<if test="eName != null and eName != ''">
+			AND e_name = #{eName}
+		</if>
+	</select>
+
+	<update id="updateEquipment" parameterType="com.lango.demo.pojo.Equipment">
+		update equipment set
+		e_name = #{eName},o_iP = #{oIP},i_iP = #{iIP},port = #{port},
+		e_message = #{eMessage},domain = #{domain},c_id = #{cId},charge_person = #{chargePerson}
+		where e_id = #{eId}
+	</update>
+
+	<insert id="insertEquipment" parameterType="com.lango.demo.pojo.Equipment">
+		insert into
+		equipment(e_name,o_iP,i_iP,port,e_message,domain,c_id,charge_person)
+		values(#{eName},#{oIP},#{iIP},#{port},#{eMessage},#{domain},#{cId},#{chargePerson})
+	</insert>
+
+	<delete id="deleteEquipment" parameterType="Long">
+		delete from equipment
+		where
+		e_id = #{eId}
+	</delete>
+</mapper>

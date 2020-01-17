@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lango.demo.mapper.TestMethodMapper">
+ 
+    <resultMap id="TestMethodMap" type="com.lango.demo.pojo.TestMethod">
+        <result column="t_id" property="tId" jdbcType="INTEGER" />
+        <result column="t_name" property="tName" jdbcType="VARCHAR" />
+        <result column="t_method" property="tMethod" jdbcType="VARCHAR" />
+    </resultMap>
+ 
+    <select id="selectTestMethods" parameterType="com.lango.demo.pojo.TestMethod" resultMap="TestMethodMap">
+        select * from testing_method where t_id &gt; 0
+        <if test="tId != null and tId != 0">
+            AND t_id = #{tId}
+        </if>
+        <if test="tName != null and tName != ''">
+            AND t_name = #{tName}
+        </if>
+    </select>
+ 
+ 	<update id="updateTestMethod" parameterType="com.lango.demo.pojo.TestMethod">
+ 		update testing_method set t_name = #{tName},t_method = #{tMethod} where t_id = #{tId}
+ 	</update>
+ 	
+ 	<insert id="insertTestMethod" parameterType="com.lango.demo.pojo.TestMethod">
+ 		insert into testing_method(t_name,t_method) 
+ 		values(#{tName},#{tMethod})
+ 	</insert>
+ 	
+ 	
+ 	
+ 	<delete id="deleteTestMethod" parameterType="Long">
+ 		delete from testing_method where t_id = #{tId}
+ 	</delete>
+ 	
+ 	<select id="selectTestingMethodsByIds" resultMap="TestMethodMap">
+ 		select * from testing_method where t_id in 
+ 		<foreach collection="list" index="index" item="id" open="(" close=")" separator=",">
+            #{id}
+		</foreach>
+ 	</select>
+</mapper>

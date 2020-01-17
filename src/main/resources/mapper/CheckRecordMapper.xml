@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lango.demo.mapper.CheckRecordMapper">
+ 
+    <resultMap id="CheckRecordMap" type="com.lango.demo.pojo.CheckRecord">
+        <result column="check_id" property="checkId" jdbcType="INTEGER" />
+        <result column="e_id" property="eId" jdbcType="INTEGER" />
+        <result column="s_id" property="sId" jdbcType="INTEGER" />
+        <result column="e_name" property="equipmentName" jdbcType="VARCHAR" />
+        <result column="s_name" property="serverName" jdbcType="VARCHAR" />
+        <result column="record_message" property="recordMessage" jdbcType="VARCHAR" />
+    </resultMap>
+ 
+    <select id="selectCheckRecords" parameterType="com.lango.demo.pojo.CheckRecord" resultMap="CheckRecordMap">
+        select check_id,check_record.e_id,check_record.s_id,equipment.e_name,server.s_name,record_message 
+        from check_record,equipment,server 
+        where check_record.e_id = equipment.e_id and check_record.s_id = server.s_id
+        <if test="checkId != null and checkId != 0">
+            AND check_id = #{checkId}
+        </if>
+        <if test="eId != null and eId != 0">
+            AND e_id = #{eId}
+        </if>
+        <if test="sId != null and sId != 0">
+            AND s_id = #{sId}
+        </if>
+        <if test="equipmentName != null and equipmentName != ''">
+            AND e_name = #{equipmentName}
+        </if>
+        <if test="serverName != null and serverName != ''">
+            AND s_name = #{serverName}
+        </if>
+    </select>
+ 	
+ 	<insert id="insertCheckRecord" parameterType="com.lango.demo.pojo.ChargePerson">
+ 		insert into check_record(e_id,s_id,record_message) values(#{eId},#{sId},#{recordMessage})
+ 	</insert>
+ 	
+ 	<delete id="deleteCheckRecord" parameterType="Long">
+ 		delete from check_record where check_id = #{checkId}
+ 	</delete>
+</mapper>

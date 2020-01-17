@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lango.demo.mapper.RepairMethodMapper">
+ 
+    <resultMap id="RepairMethodMap" type="com.lango.demo.pojo.RepairMethod">
+        <result column="r_id" property="rId" jdbcType="INTEGER" />
+        <result column="r_name" property="rName" jdbcType="VARCHAR" />
+        <result column="r_method" property="rMethod" jdbcType="VARCHAR" />
+    </resultMap>
+ 
+    <select id="selectRepairMethods" parameterType="com.lango.demo.pojo.RepairMethod" resultMap="RepairMethodMap">
+        select * from repair_method where r_id &gt; 0
+        <if test="rId != null and rId != 0">
+            AND r_id = #{rId}
+        </if>
+        <if test="rName != null and rName != ''">
+            AND r_name = #{rName}
+        </if>
+    </select>
+ 
+ 	<update id="updateRepairMethod" parameterType="com.lango.demo.pojo.RepairMethod">
+ 		update repair_method set r_name = #{rName},r_method = #{rMethod} where r_id = #{rId}
+ 	</update>
+ 	
+ 	<insert id="insertRepairMethod" parameterType="com.lango.demo.pojo.RepairMethod">
+ 		insert into repair_method(r_name,r_method) 
+ 		values(#{rName},#{rMethod})
+ 	</insert>
+ 	
+ 	<select id="selectMethodsByIds" resultMap="RepairMethodMap">
+ 		select * from repair_method where r_id in 
+ 		<foreach collection="list" index="index" item="id" open="(" close=")" separator=",">
+            #{id}
+		</foreach>
+ 	</select>
+ 	
+ 	<delete id="deleteRepairMethod" parameterType="Long">
+ 		delete from repair_method where r_id = #{rId}
+ 	</delete>
+</mapper>

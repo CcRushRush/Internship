@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lango.demo.mapper.FaultRecordMapper">
+ 
+    <resultMap id="FaultRecordMap" type="com.lango.demo.pojo.FaultRecord">
+        <result column="f_id" property="fId" jdbcType="INTEGER" />
+        <result column="e_id" property="eId" jdbcType="INTEGER" />
+        <result column="s_id" property="sId" jdbcType="INTEGER" />
+        <result column="f_type" property="fType" jdbcType="VARCHAR" />
+        <result column="c_id" property="cId" jdbcType="INTEGER" />
+        <result column="charge_person" property="chargePerson" jdbcType="VARCHAR" />
+        <result column="method_ids" property="methodIds" jdbcType="VARCHAR" />
+        <result column="result" property="result" jdbcType="VARCHAR" />
+        <result column="operate_time" property="operateTime" />
+    </resultMap>
+ 
+    <select id="selectFaultRecords" parameterType="com.lango.demo.pojo.FaultRecord" resultMap="FaultRecordMap">
+        select * from fault_record where f_id &gt; 0
+        <if test="fId != null and fId != 0">
+            AND f_id = #{fId}
+        </if>
+        <if test="eId != null and eId != 0">
+            AND e_id = #{eId}
+        </if>
+        <if test="sId != null and sId != 0">
+            AND s_id = #{sId}
+        </if>
+        <if test="cId != null and cId != 0">
+            AND c_id = #{cId}
+        </if>
+    </select>
+ 	
+ 	<insert id="insertFaultRecord" parameterType="com.lango.demo.pojo.FaultRecord">
+ 		insert into fault_record(e_id,s_id,f_type,c_id,charge_person,method_ids,result) values(#{eId},#{sId},#{fType},#{cId},#{chargePerson},#{methodIds},#{result})
+ 	</insert>
+ 	
+ 	<delete id="deleteFaultRecord" parameterType="Long">
+ 		delete from fault_record where f_id = #{fId}
+ 	</delete>
+</mapper>

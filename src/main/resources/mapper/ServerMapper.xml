@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lango.demo.mapper.ServerMapper">
+
+	<resultMap id="ServerMap" type="com.lango.demo.pojo.Server">
+		<result column="s_id" property="sId" jdbcType="INTEGER" />
+		<result column="s_name" property="sName" jdbcType="VARCHAR" />
+		<result column="s_type" property="sType" jdbcType="VARCHAR" />
+		<result column="s_message" property="sMessage" jdbcType="VARCHAR" />
+		<result column="auto_notice" property="autoNotice" jdbcType="VARCHAR" />
+		<result column="auto_repair" property="autoRepair" jdbcType="VARCHAR" />
+		<result column="e_id" property="eId" jdbcType="INTEGER" />
+		<result column="c_id" property="cId" jdbcType="INTEGER" />
+		<result column="charge_person" property="chargePerson"
+			jdbcType="VARCHAR" />
+		<result column="test_method_ids" property="testMethodIds"
+			jdbcType="VARCHAR" />
+		<result column="repair_method_ids" property="repairMethodIds"
+			jdbcType="VARCHAR" />
+		<result column="server_time" property="serverTime" />
+	</resultMap>
+
+	<select id="selectServers" parameterType="com.lango.demo.pojo.Server"
+		resultMap="ServerMap">
+		select * from server where s_id &gt; 0
+		<if test="sId != null and sId != 0">
+			AND s_id = #{sId}
+		</if>
+		<if test="eId != null and eId != 0">
+			AND e_id = #{eId}
+		</if>
+		<if test="cId != null and cId != 0">
+			AND c_id = #{cId}
+		</if>
+		<if test="sName != null and sName != ''">
+			AND s_name = #{sName}
+		</if>
+		<if test="sType != null and sType != ''">
+			AND s_type = #{sType}
+		</if>
+		<!-- 用于获取自动检测 -->
+		<if test="autoNotice != 0">
+			AND auto_notice = #{autoNotice}
+		</if>
+		<!-- 用于获取自动修复 -->
+		<if test="autoRepair != 0">
+			AND auto_repair = #{autoRepair}
+		</if>
+	</select>
+
+	<update id="updateServer" parameterType="com.lango.demo.pojo.Server">
+		update server set s_name
+		= #{sName},s_type = #{sType},s_message =
+		#{sMessage},auto_notice =
+		#{autoNotice},e_id =
+		#{eId},
+		auto_repair = #{autoRepair},c_id = #{cId},charge_person
+		= #{chargePerson},test_method_ids =
+		#{testMethodIds},repair_method_ids = #{repairMethodIds}
+		where s_id =
+		#{sId}
+	</update>
+
+	<insert id="insertServer" parameterType="com.lango.demo.pojo.Server">
+		insert into
+		server(s_name,s_type,s_message,auto_notice,auto_repair,e_id,c_id,charge_person,test_method_ids,repair_method_ids)
+		values(#{sName},#{sType},#{sMessage},#{autoNotice},#{autoRepair},#{eId},#{cId},#{chargePerson},#{testMethodIds},#{repairMethodIds})
+	</insert>
+
+	<delete id="deleteServer" parameterType="Long">
+		delete from server where
+		s_id = #{sId}
+	</delete>
+	
+	<!-- <select id="judgeHasTestMethodId" parameterType="Long" resultMap="ServerMap">
+		select count(*) from server where test_method_ids like
+	</select> -->
+	
+	<delete id="deleteServerByEId" parameterType="Long">
+		delete from server where
+		e_id = #{eId}
+	</delete>
+</mapper>

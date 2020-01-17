@@ -57,7 +57,7 @@ public class ChargePersonController {
 	}
 
 	@DeleteMapping(value = "/{cId}")
-	public boolean deleteChargePerson(@PathVariable("cId") Long cId) {
+	public String deleteChargePerson(@PathVariable("cId") Long cId) {
 		return chargeService.deleteChargePerson(cId);
 	}
 }

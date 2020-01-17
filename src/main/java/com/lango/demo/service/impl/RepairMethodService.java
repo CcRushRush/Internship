@@ -71,6 +71,8 @@ public class RepairMethodService implements IRepairMethodService {
 	@Override
 	public List<RepairMethod> selectMethodsByIds(String ids) {
 		// TODO Auto-generated method stub
+		//将传过来的修复方法id可能是字符串替换成数字,如["1","2"] => [1,2]
+		logger.info("查询修复方法,id分别为:"+ids);
 		ids = ids.replace("\"", "");
 		ids = ids.substring(1, ids.length() - 1);
 		String[] words2 = ids.split("\\,");

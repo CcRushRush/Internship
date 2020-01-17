@@ -15,5 +15,5 @@ public interface IChargeService {
 	
 	public boolean insertChargePerson(ChargePerson chargePerson);
 	
-	public boolean deleteChargePerson(Long cId);
+	public String deleteChargePerson(Long cId);
 }

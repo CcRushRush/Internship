@@ -52,12 +52,14 @@ public class ServerService implements IServerService {
 	@Override
 	public List<Server> selectServers(Server server) {
 		// TODO Auto-generated method stub
+		logger.info("查询服务,参数为:" + server);
 		return serverMapper.selectServers(server);
 	}
 
 	@Override
 	public boolean updateServer(Server server) {
 		// TODO Auto-generated method stub
+		logger.info("更新服务,参数为:" + server);
 		int judge = serverMapper.updateServer(server);
 		if (judge > 0)
 			return true;
@@ -67,6 +69,7 @@ public class ServerService implements IServerService {
 	@Override
 	public boolean insertServer(Server server) {
 		// TODO Auto-generated method stub
+		logger.info("添加服务,参数为:" + server);
 		int judge = serverMapper.insertServer(server);
 		if (judge > 0)
 			return true;
@@ -76,6 +79,7 @@ public class ServerService implements IServerService {
 	@Override
 	public boolean deleteServer(Long sId) {
 		// TODO Auto-generated method stub
+		logger.info("删除服务,服务id为:" + sId);
 		int judge = serverMapper.deleteServer(sId);
 		if (judge > 0)
 			return true;
@@ -86,7 +90,7 @@ public class ServerService implements IServerService {
 	@Override
 	public boolean repairServer(Server server) {
 		logger.info("正在自动修复服务:" + server.getsName());
-		//将传过来的修复方法id可能是字符串替换成数字,如["1","2"] => [1,2]
+		// 将传过来的修复方法id可能是字符串替换成数字,如["1","2"] => [1,2]
 		String ids = server.getRepairMethodIds();
 		ids = ids.replace("\"", "");
 		ids = ids.substring(1, ids.length() - 1);
@@ -134,7 +138,7 @@ public class ServerService implements IServerService {
 		if (ids == null) {
 			return null;
 		}
-		//将传过来的测试方法id可能是字符串替换成数字,如["1","2"] => [1,2]
+		// 将传过来的测试方法id可能是字符串替换成数字,如["1","2"] => [1,2]
 		ids = ids.replace("\"", "");
 		System.out.println(ids);
 		ids = ids.substring(1, ids.length() - 1);
@@ -143,7 +147,7 @@ public class ServerService implements IServerService {
 		for (int i = 0; i < words2.length; i++) {
 			lists.add(Integer.parseInt(words2[i]));
 		}
-		
+
 		// 根据方法id获取检测方法
 		List<TestMethod> testMethods = testMethodMapper.selectTestingMethodsByIds(lists);
 
@@ -153,16 +157,16 @@ public class ServerService implements IServerService {
 			return null;
 		}
 		// 将configurations 转成json对象
-		
-//		JSONObject object = JSONObject.parseObject(configurations);
-//		
-//		// 开始遍历所有key-value
-//		// fastjson解析方法
-//		System.out.println("服务名为:" + server.getsId() + "的配置信息如下:");
-//		for (Map.Entry<String, Object> entry : object.entrySet()) {
-//			// 这里主要对配置信息取出,然后放入到相应的方法中进行检测
-//			System.out.println(entry.getKey() + ":" + entry.getValue());
-//		}
+
+		// JSONObject object = JSONObject.parseObject(configurations);
+		//
+		// // 开始遍历所有key-value
+		// // fastjson解析方法
+		// System.out.println("服务名为:" + server.getsId() + "的配置信息如下:");
+		// for (Map.Entry<String, Object> entry : object.entrySet()) {
+		// // 这里主要对配置信息取出,然后放入到相应的方法中进行检测
+		// System.out.println(entry.getKey() + ":" + entry.getValue());
+		// }
 		// 保存每次测试结果
 		List<String> testResults = new ArrayList<>();
 		for (Iterator<TestMethod> iterator = testMethods.iterator(); iterator.hasNext();) {

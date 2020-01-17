@@ -27,6 +27,8 @@
  		values(#{tName},#{tMethod})
  	</insert>
  	
+ 	
+ 	
  	<delete id="deleteTestMethod" parameterType="Long">
  		delete from testing_method where t_id = #{tId}
  	</delete>

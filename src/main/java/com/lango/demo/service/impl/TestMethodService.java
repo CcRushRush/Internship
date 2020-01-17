@@ -55,6 +55,8 @@ public class TestMethodService implements ITestMethodService {
 	public boolean deleteTestMethod(Long tId) {
 		// TODO Auto-generated method stub
 		logger.info("删除测试方法,id为:" + tId);
+		
+		
 		int judge = testMethodMapper.deleteTestMethod(tId);
 		if (judge > 0)
 			return true;
